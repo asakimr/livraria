@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('Livro_Assunto', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->integer("Livro_Codl")->unsigned();
+            $table->integer("Assunto_codAs")->unsigned();
+
+            $table->foreign("Livro_Codl", "Livro_Assunto_FKIndex1")->references("Codl")->on("Livro")->onDelete("cascade");
+            $table->foreign("Assunto_codAs", "Livro_Assunto_FKIndex2")->references("codAs")->on("Assunto")->onDelete("cascade");
+
         });
     }
 

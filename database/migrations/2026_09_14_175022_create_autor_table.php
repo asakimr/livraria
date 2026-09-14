@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('Autor', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->increments('CodAu');
+
+            $table->string("Nome", 40);
+
         });
     }
 
