@@ -17,6 +17,10 @@ class AssuntoService{
         return $query->paginate($porPagina);
     }
 
+    public function obterParaSelect(){
+        return Assunto::orderBy("Descricao", "asc")->get();
+    }
+
     public function salvar(array $dados){
         return Assunto::create($dados);
     }

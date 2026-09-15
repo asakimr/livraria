@@ -18,6 +18,10 @@ class AutorService {
         return $query->paginate($porPagina);
     }
 
+    public function obterParaSelect(){
+        return Autor::orderBy("Nome", "asc")->get();
+    }
+
     public function salvar(array $dados){
         return Autor::create($dados);
     }
