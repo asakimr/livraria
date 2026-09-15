@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\AutorController;
+use App\Http\Controllers\AssuntoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", function(){
-    return redirect()->route("autor.index");
+    return view('index');
 });
 
 Route::resource("autor", AutorController::class);
+Route::resource("assunto", AssuntoController::class);
 
 require __DIR__.'/settings.php';
