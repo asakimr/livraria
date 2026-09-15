@@ -11,4 +11,10 @@
             </table>
         </div>
     </div>
+
+    @isset($footer)
+        <div class="card-footer bg-white border-top pt-3 pb-1">
+            {{ $footer }}
+        </div>
+    @endisset
 </div>

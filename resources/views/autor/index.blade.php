@@ -59,6 +59,12 @@
                 </tr>
             @endforelse
         </x-slot:tbody>
+
+        <x-slot:footer>
+            <div class="d-flex justify-content-end">
+                {{ $autores->withQueryString()->links() }}
+            </div>
+        </x-slot:footer>
     </x-card-table>
 
     {{-- Modal para adicionar novos autores --}}
