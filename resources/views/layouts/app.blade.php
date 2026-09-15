@@ -24,16 +24,16 @@
         <!-- Menu -->
         <ul class="nav flex-column sidebar-nav mt-2">
             <li class="nav-item">
-                <a class="nav-link active" href="#"><i class="bi bi-house-door"></i> Início</a>
+                <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{url('/')}}"><i class="bi bi-house-door"></i> Início</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#"><i class="bi bi-book"></i> Livros</a>
+                <a class="nav-link {{ request()->routeIs('livro.*') ? 'active' : '' }}" href="#"><i class="bi bi-book"></i> Livros</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#"><i class="bi bi-person-lines-fill"></i> Autores</a>
+                <a class="nav-link {{ request()->routeIs('autor.*') ? 'active' : '' }}" href="{{route('autor.index')}}"><i class="bi bi-person-lines-fill"></i> Autores</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#"><i class="bi bi-tags"></i> Assuntos</a>
+                <a class="nav-link {{ request()->routeIs('assunto.*') ? 'active' : '' }}" href="{{route('assunto.index')}}"><i class="bi bi-tags"></i> Assuntos</a>
             </li>
 
             <hr class="border-secondary mx-3 my-3">
