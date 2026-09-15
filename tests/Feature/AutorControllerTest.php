@@ -53,3 +53,36 @@ it('Excluir autor', function () {
         'CodAu' => $autor->CodAu
     ]);
 });
+
+
+it('Listagem de Autores', function () {
+    for ($i = 1; $i <= 15; $i++) {
+            Autor::create(['Nome' => "Autor Teste {$i}"]);
+        }
+
+        $response = $this->get(route('autor.index'));
+        $response->assertStatus(200);
+
+        $response->assertViewHas('autores', function ($autores) {
+            // Usando o expect() do Pest, se algo falhar aqui, a mensagem de erro será exata!
+            expect($autores)->toBeInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class);
+            expect($autores->total())->toBe(15);
+            expect($autores->lastPage())->toBe(2);
+
+            return true;
+        });
+});
+
+it('Buscar autor pelo campo de busca', function () {
+    // 1. Cria dois autores com nomes bem diferentes
+    Autor::create(['Nome' => 'Flavio Castro']);
+    Autor::create(['Nome' => 'Cesar Lemos']);
+
+    // 2. Acessa a rota passando a query string de busca (?search=Clarice)
+    $response = $this->get(route('autor.index', ['search' => 'Cesar']));
+
+    // 3. Garante que achou a Clarice, mas filtrou (escondeu) o Machado
+    $response->assertStatus(200)
+             ->assertSee('Cesar Lemos')
+             ->assertDontSee('Flavio Castro');
+});
