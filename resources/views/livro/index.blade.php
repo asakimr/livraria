@@ -83,6 +83,7 @@
     <x-modal id="modalNovoLivro" title="Cadastrar Novo Livro" size="modal-lg">
         <form action="{{ route('livro.store') }}" method="POST">
             @csrf
+            <input type="hidden" name="_modal" value="modalNovoLivro">
 
             <div class="mb-3">
                 <label for="Titulo" class="form-label text-primary fw-semibold">Título <span class="text-danger">*</span></label>
@@ -131,7 +132,7 @@
                         <span class="input-group-text bg-light fw-bold text-primary">R$</span>
                         <!-- Se for edição, converte o 59.90 do banco de volta para 59,90 visualmente -->
                         <input type="text" name="Valor" id="Valor" class="form-control mascara-dinheiro @error('Valor') is-invalid @enderror"
-                            value="{{ old('Valor') }}"
+                            value=""
                             required placeholder="0,00">
                     </div>
                     @error('Valor')
@@ -149,7 +150,9 @@
 
     {{-- Modal para editar os livros --}}
     <x-modal id="modalEditarLivro" title="Editar Livro" size="modal-lg">
-        <form id="formEditarLivro" method="POST" action="{{ route('livro.update', 'ID_FALSO') }}">
+        <form id="formEditarLivro" method="POST" action="{{ route('livro.update', 'ID_FALSO') }}" data-update-url="{{ route('livro.update', 'ID_FALSO') }}">
+            <input type="hidden" name="_modal" value="modalEditarLivro">
+            <input type="hidden" name="_registro" value="">
             @csrf
             @method('PUT')
 
@@ -200,7 +203,7 @@
                         <span class="input-group-text bg-light fw-bold text-primary">R$</span>
                         <!-- Se for edição, converte o 59.90 do banco de volta para 59,90 visualmente -->
                         <input type="text" name="Valor" id="editValor" class="form-control mascara-dinheiro @error('Valor') is-invalid @enderror"
-                            value="{{ old('Valor') }}"
+                            value=""
                             required placeholder="0,00">
                     </div>
                     @error('Valor')
@@ -225,13 +228,15 @@
 
             selectsMultiplos.forEach(function (select) {
                 // Inicializa e guarda a instância usando o ID do select como chave
-                escolhasInstances[select.id] = new Choices(select, {
+                select.escolhasInstance = escolhasInstances[select.id] = new Choices(select, {
                     removeItemButton: true,
                     searchEnabled: true,
                     placeholder: true,
                     placeholderValue: 'Selecione os itens...',
                     noResultsText: 'Nenhum item encontrado',
-                    itemSelectText: 'Enter',
+                    itemSelectText: 'Pressione Enter para selecionar',
+                    removeItemLabelText: 'Remover item',
+                    loadingText: 'Carregando...',
                     noChoicesText: "Opção de seleção não disponível.",
                     fuseOptions: {
                         threshold: 0.1,
@@ -246,6 +251,7 @@
             if (modalEditar) {
                 modalEditar.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
+                    if (!button) return; // A reabertura após erro mantém os dados recuperados.
 
                     // Coleta os dados simples
                     const id = button.getAttribute('data-id');
@@ -261,6 +267,7 @@
 
                     // Atualiza a Rota
                     const form = document.getElementById('formEditarLivro');
+                    form.elements.namedItem('_registro').value = id;
                     const urlBase = form.action;
                     form.action = urlBase.replace(/livro\/\d+|livro\/ID_FALSO/, `livro/${id}`);
 

@@ -71,6 +71,7 @@
     <x-modal id="modalNovoAutor" title="Cadastrar Novo Autor">
         <form action="{{ route('autor.store') }}" method="POST">
             @csrf
+            <input type="hidden" name="_modal" value="modalNovoAutor">
 
             <div class="mb-3">
                 <label for="Nome" class="form-label text-primary fw-semibold">Nome do Autor <span class="text-danger">*</span></label>
@@ -87,7 +88,9 @@
     {{-- Modal para editar os autores --}}
 
     <x-modal id="modalEditarAutor" title="Editar Autor">
-        <form id="formEditarAutor" method="POST" action="">
+        <form id="formEditarAutor" method="POST" action="" data-update-url="{{ route('autor.update', 'ID_FALSO') }}">
+            <input type="hidden" name="_modal" value="modalEditarAutor">
+            <input type="hidden" name="_registro" value="">
             @csrf
             @method('PUT')
 
@@ -110,14 +113,16 @@
             if (modalEditar) {
                 modalEditar.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
+                    if (!button) return; // A reabertura após erro mantém os dados recuperados.
 
                     const id = button.getAttribute('data-id');
                     const nome = button.getAttribute('data-nome');
 
                     const form = document.getElementById('formEditarAutor');
+                    form.elements.namedItem('_registro').value = id;
                     const inputNome = document.getElementById('editNome');
 
-                    form.action = `/autor/${id}`;
+                    form.action = form.dataset.updateUrl.replace('ID_FALSO', id);
                     inputNome.value = nome;
                 });
             }
