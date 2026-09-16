@@ -59,3 +59,49 @@ body {
 .choices.is-focused.is-open::after {
     border-color: $secondary transparent transparent transparent;
 }
+
+
+//ChoicesJS inline
+
+/* 1. Transforma a caixa inteira num flex horizontal e coloca a rolagem NELA */
+.choices[data-type*="select-multiple"] .choices__inner {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    align-items: center !important;
+    padding: 4px 8px !important;
+    min-height: 38px !important; /* Altura exata do form-control do Bootstrap */
+    scrollbar-width: thin;
+}
+
+/* 2. Remove margens da lista interna */
+.choices[data-type*="select-multiple"] .choices__list--multiple {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+}
+
+/* 3. Garante que os balões não encolham e fiquem alinhados */
+.choices[data-type*="select-multiple"] .choices__item {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    margin-bottom: 0 !important;
+    margin-right: 4px !important;
+}
+
+/* 4. Trava o input de busca na MESMA LINHA dos balões */
+.choices[data-type*="select-multiple"] .choices__input {
+    flex-shrink: 0 !important;
+    min-width: 150px !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+
+/* Estilizando a barra de rolagem para navegadores Webkit */
+.choices[data-type*="select-multiple"] .choices__inner::-webkit-scrollbar {
+    height: 4px;
+}
+.choices[data-type*="select-multiple"] .choices__inner::-webkit-scrollbar-thumb {
+    background: #ced4da;
+    border-radius: 4px;
+}

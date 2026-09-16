@@ -100,7 +100,7 @@
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="AnoPublicacao" class="form-label text-primary fw-semibold">Ano <span class="text-danger">*</span></label>
-                    <input type="number" name="AnoPublicacao" id="AnoPublicacao" class="form-control" required placeholder="Ex: 1954">
+                    <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="AnoPublicacao" id="AnoPublicacao" class="form-control" required maxlength="4" placeholder="Ex: 1954">
                 </div>
             </div>
 
@@ -169,7 +169,7 @@
                 </div>
                 <div class="col-md-3 mb-3">
                     <label for="editAnoPublicacao" class="form-label text-primary fw-semibold">Ano <span class="text-danger">*</span></label>
-                    <input type="number" name="AnoPublicacao" id="editAnoPublicacao" class="form-control" required>
+                    <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="AnoPublicacao" id="editAnoPublicacao" class="form-control" required maxlength=4 >
                 </div>
             </div>
 

@@ -39,7 +39,7 @@
             <hr class="border-secondary mx-3 my-3">
 
             <li class="nav-item">
-                <a class="nav-link text-secondary" href="#"><i class="bi bi-file-earmark-bar-graph"></i> Relatório</a>
+                <a class="nav-link text-secondary {{ request()->routeIs('relatorios.*') ? 'active' : '' }}" href="{{route('relatorios.index')}}"><i class="bi bi-file-earmark-bar-graph"></i> Relatório</a>
             </li>
         </ul>
     </aside>
