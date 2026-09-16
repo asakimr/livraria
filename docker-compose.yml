@@ -1,54 +1,53 @@
 services:
   app:
-    build:
-     context: .
-     dockerfile: Dockerfile
-    container_name: livraria_app
-    user: "1000:1000"
-    userns_mode: keep-id
-    volumes:
-      - .:/var/www/html:z
-    ports:
-      - "8777:8777"
-    # Inicia o artisan serve acessível de fora do container
-    restart: unless-stopped
+    build: .
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
     working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "127.0.0.1:${APP_PORT:-8777}:8777"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - PHP_EXTENSIONS=intl
-      
+      COMPOSER_HOME: /tmp/composer
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DOCKER_DB_DATABASE:-${DB_DATABASE:-livraria}}
+      DB_USERNAME: ${DOCKER_DB_USERNAME:-${DB_USERNAME:-livraria}}
+      DB_PASSWORD: ${DOCKER_DB_PASSWORD:-${DB_PASSWORD:-livraria_local}}
+      DB_URL: ''
+      DB_SOCKET: ''
     depends_on:
-      - db
-    command: >
-      sh -c "composer install --no-interaction &&
-             php artisan key:generate --force &&
-             php artisan serve --host=0.0.0.0 --port=8777"
+      db:
+        condition: service_healthy
+    command: php artisan serve --host=0.0.0.0 --port=8777
 
   db:
     image: mysql:8.0
-    container_name: livraria_db
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DOCKER_DB_DATABASE:-${DB_DATABASE:-livraria}}
+      MYSQL_USER: ${DOCKER_DB_USERNAME:-${DB_USERNAME:-livraria}}
+      MYSQL_PASSWORD: ${DOCKER_DB_PASSWORD:-${DB_PASSWORD:-livraria_local}}
+      MYSQL_ROOT_PASSWORD: ${DOCKER_DB_ROOT_PASSWORD:-${DB_PASSWORD:-root_local}}
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql -h 127.0.0.1 -u\"$$MYSQL_USER\" \"$$MYSQL_DATABASE\" -e 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
   node:
-    image: node:20-alpine
-    container_name: livraria_node
-    user: "1000:1000"
-    userns_mode: keep-id
+    image: node:22-bookworm-slim
+    profiles: ["tools"]
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
     working_dir: /var/www/html
+    environment:
+      npm_config_cache: /tmp/npm-cache
     volumes:
-      - ./:/var/www/html:z
-    ports:
-      - "5173:5173" # Porta padrão do Vite
-    command: sh -c "npm install && npm run dev -- --host"
+      - .:/var/www/html
+    command: sh -c "npm ci && npm run build"
 
 volumes:
   db_data:
