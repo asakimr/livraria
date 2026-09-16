@@ -15,6 +15,17 @@ class LivroRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(){
+        if ($this->has('Valor') && $this->Valor !== null) {
+            #Remove os pontos de milhar, e altera a virugla pelo ponto decimal pra tornar compatível ao banco.
+            $valorLimpo = str_replace(['.', ','], ['', '.'], $this->Valor);
+
+            $this->merge([
+                'Valor' => $valorLimpo,
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,7 +37,14 @@ class LivroRequest extends FormRequest
             "Titulo" =>["required", "string", "max:40"],
             "Editora" => ["required", "string", "max:40"],
             "Edicao" => ["required", "integer"],
-            "AnoPublicacao" => ["required","digits:4 "]
+            "AnoPublicacao" => ["required","digits:4 "],
+            "Valor" => "required|numeric|min:0|max:999999.99",
+
+            'autores'   => 'required|array|min:1',
+            'autores.*' => 'exists:Autor,CodAu',
+
+            'assuntos'   => 'required|array|min:1',
+            'assuntos.*' => 'exists:Assunto,codAs'
         ];
     }
 
@@ -48,7 +66,23 @@ class LivroRequest extends FormRequest
 
             #Ano de Publicação
             "AnoPublicacao.required" => "O ano de publicação é obrigatório.",
-            "AnoPublicacao.digits" => "O ano de publicação deve ter exatamente 4 dígitos numéricos."
+            "AnoPublicacao.digits" => "O ano de publicação deve ter exatamente 4 dígitos numéricos.",
+
+            #Valor
+            'Valor.required' => 'O campo Valor é obrigatório.',
+            'Valor.numeric'  => 'O formato do valor informado é inválido.',
+            'Valor.min'      => 'O valor do livro não pode ser negativo.',
+            'Valor.max'      => 'O valor máximo permitido é de R$ 999.999,99.',
+
+            #Autores
+            'autores.required' => 'É obrigatório selecionar pelo menos um autor.',
+            'autores.min'      => 'É obrigatório selecionar pelo menos um autor.',
+            'autores.*.exists' => 'Um dos autores selecionados é inválido.',
+
+            #Assuntos
+            'assuntos.required' => 'É obrigatório selecionar pelo menos um assunto.',
+            'assuntos.min'      => 'É obrigatório selecionar pelo menos um assunto.',
+            'assuntos.*.exists' => 'Um dos assuntos selecionados é inválido.',
         ];
     }
 }
