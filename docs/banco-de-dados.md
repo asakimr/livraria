@@ -23,7 +23,20 @@ Todos os campos abaixo são obrigatórios. As tabelas do domínio não usam time
 | Livro_Assunto | Livro_Codl | INT UNSIGNED | FK para Livro.Codl |
 | Livro_Assunto | Assunto_codAs | INT UNSIGNED | FK para Assunto.codAs |
 
-`Livro_Autor` tem chave primária composta (`Livro_Codl`, `Autor_CodAu`), impedindo duplicações. `Livro_Assunto` segue a migration original, sem chave primária composta: os arrays distintos e o sync da aplicação impedem vínculos repetidos pelos fluxos disponíveis, mas uma escrita SQL direta pode duplicá-los.
+`Livro_Autor` tem chave primária composta (`Livro_Codl`, `Autor_CodAu`). `Livro_Assunto` também tem chave primária composta (`Livro_Codl`, `Assunto_codAs`), acrescentada pela migration `2026_09_16_120000_add_primary_key_to_livro_assunto_table`. Ambas impedem associações repetidas inclusive em escrita SQL direta.
+
+### Atualização de uma instalação existente
+
+Faça backup e suspenda escritas durante a atualização. Aplique com `php artisan migrate --force`; não use `migrate:fresh` em uma base com dados. A nova migration verifica duplicações antes de alterar a tabela. Se encontrar qualquer par repetido, interrompe com uma mensagem explicativa, sem remover nem escolher registros automaticamente. Use a consulta abaixo para revisar o legado e decidir a correção antes de tentar novamente:
+
+```sql
+SELECT Livro_Codl, Assunto_codAs, COUNT(*) AS quantidade
+FROM Livro_Assunto
+GROUP BY Livro_Codl, Assunto_codAs
+HAVING COUNT(*) > 1;
+```
+
+Sem duplicações, as associações existentes são preservadas. O rollback dessa migration remove a chave adicionada, preservando linhas e FKs; após revertê-la, o banco volta a aceitar pares repetidos. No MySQL, o rollback restaura um índice de suporte em Livro_Codl quando necessário: o servidor pode ter descartado o índice automático da FK ao aproveitar a nova PK. No SQLite, a alteração exige reconstruir a tabela: a migration mantém a view apontando para o nome original e restaura a configuração temporária da conexão. No MySQL, aplica a alteração de chave diretamente.
 
 As FKs nomeadas `Livro_Autor_FKIndex1/2` e `Livro_Assunto_FKIndex1/2` têm ON DELETE CASCADE. O MySQL cria os índices necessários às FKs quando não cobertos por um índice existente. O primeiro campo da PK composta já serve ao vínculo de livro em Livro_Autor. Os nomes das constraints não devem ser confundidos com uma garantia de nome idêntico para todos os índices físicos. Para inspecionar uma instalação MySQL:
 
@@ -81,4 +94,3 @@ Estas tabelas vieram do projeto Laravel e não foram adicionadas para a nova API
 | failed_jobs | id BIGINT UNSIGNED PK auto incremento; uuid VARCHAR(255) UNIQUE; connection/queue TEXT; payload/exception LONGTEXT; failed_at TIMESTAMP padrão atual; índice connection/queue/failed_at |
 
 O arquivo `.env.example` usa sessão/cache em arquivos e fila síncrona. As migrations de infraestrutura foram preservadas para não apagar objetos existentes. Não existe nova tabela personal_access_tokens.
-
