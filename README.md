@@ -42,9 +42,6 @@ npm run build
 - [Banco de dados, objetos e decisões](docs/banco-de-dados.md)
 - [API e exemplos de requisição](docs/api.md)
 - [Instalação, Docker, CI e implantação](docs/implantacao.md)
-- [Testes e ferramentas de qualidade](docs/qualidade.md)
-- [Backlog e critérios da adequação](docs/stories/)
-- [Proposta e tarefas OpenSpec](openspec/changes/adequar-desafio-tecnico/)
 
-O ano de publicação permanece inteiro por decisão do projeto, com justificativa documentada. Jenkins e SonarQube possuem configuração de referência; sua execução depende de infraestrutura externa e não significa que houve publicação.
+O ano de publicação permanece inteiro por decisão do projeto, com justificativa documentada.
 

@@ -39,6 +39,8 @@ curl --fail http://localhost:8777/up
 
 O serviço app espera o healthcheck do MySQL. O ambiente do Compose sobrescreve a conexão do .env apenas dentro do container. As dependências e assets são gerados no diretório montado com seu UID/GID. Não é iniciado servidor Vite: o build estático atende a apresentação.
 
+O `artisan serve` usa `--no-reload` para que a conexão MySQL injetada pelo Compose não seja perdida por um processo filho. Em compensação, mudanças em `.env` ou `docker-compose.yml` não são recarregadas automaticamente: execute `docker compose up -d --no-deps --force-recreate app` para recriar somente a aplicação. O serviço `db` e o volume do banco são preservados.
+
 O script prepara um arquivo SQLite padrão vazio mesmo no Docker; a conexão mysql usa somente o serviço db. Dependências não são instaladas e APP_KEY não é regenerada a cada reinício.
 
 Se 8777 estiver ocupada, defina APP_PORT=8778 e ajuste APP_URL no .env. Para o banco local do Compose, as senhas padrão são apenas de demonstração.
@@ -61,11 +63,11 @@ Não use migrate:fresh para atualizar uma instalação: ele remove tabelas. Reve
 
 Migrations já aplicadas não são reaplicadas automaticamente quando seu arquivo é editado. Nesta adequação, o ajuste do down da view corrige a reversão futura; não exige apagar ou recriar o banco atual.
 
-## CI e Jenkins
+## Integração contínua
 
 O GitHub Actions prepara PHP/Node, executa build, Pint, PHPStan e Pest, em matriz SQLite/MySQL descartável. Credenciais do serviço são exclusivas do ambiente de CI.
 
-O Jenkinsfile fornece a mesma sequência em um workspace de CI isolado. O agente precisa ter PHP/extensões, Composer, Node/npm e Git no PATH; plugins Pipeline, Git e Credentials Binding devem estar disponíveis. Configure um job Pipeline from SCM apontando para Jenkinsfile. RUN_SONAR fica desligado por padrão.
+Não há Jenkinsfile nem integração SonarQube versionados neste checkout. O quality check do GitHub Actions é a automação de referência; uma integração externa só deve ser documentada depois de configurada e executada.
 
 O pipeline guarda public/build como artefato depois das verificações. Esse artefato contém somente assets; não é um pacote completo do backend. Não há deploy automático em produção nem conexão com servidor de terceiros.
 
