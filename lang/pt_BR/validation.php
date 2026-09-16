@@ -6,6 +6,7 @@ return [
     'integer' => 'O campo :attribute deve ser um número inteiro.',
     'numeric' => 'O campo :attribute deve ser um número.',
     'array' => 'O campo :attribute deve ser uma lista.',
+    'list' => 'O campo :attribute deve ser uma lista com índices consecutivos a partir de zero.',
     'exists' => 'O valor selecionado para :attribute é inválido.',
     'distinct' => 'O campo :attribute possui um valor repetido.',
     'digits' => 'O campo :attribute deve ter :digits dígitos.',

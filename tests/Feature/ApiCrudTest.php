@@ -79,3 +79,17 @@ it('exige lista de IDs inteiros nas relações da API', function (array $autores
     $this->postJson('/api/livros', $dados)->assertUnprocessable()->assertJsonValidationErrors($campo);
     $this->assertDatabaseCount('Livro', 0);
 })->with([[['x' => 1], 'autores'], [[true], 'autores.0'], [[['x' => 1]], 'autores.0']]);
+
+it('explica em português quando a relação recebe um objeto em vez de uma lista', function (string $campo) {
+    $autor = Autor::create(['Nome' => 'Autor']);
+    $assunto = Assunto::create(['Descricao' => 'Assunto']);
+    $dados = ['Titulo' => 'Livro', 'Editora' => 'Editora', 'Edicao' => 1, 'AnoPublicacao' => 2026,
+        'Valor' => '59.90', 'autores' => [$autor->CodAu], 'assuntos' => [$assunto->codAs]];
+    $dados[$campo] = ['x' => $dados[$campo][0]];
+
+    $this->postJson('/api/livros', $dados)->assertUnprocessable()
+        ->assertJsonPath('errors.'.$campo.'.0', 'O campo '.$campo.' deve ser uma lista com índices consecutivos a partir de zero.');
+    $this->assertDatabaseCount('Livro', 0);
+    $this->assertDatabaseCount('Livro_Autor', 0);
+    $this->assertDatabaseCount('Livro_Assunto', 0);
+})->with(['autores', 'assuntos']);
