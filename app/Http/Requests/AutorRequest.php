@@ -23,15 +23,16 @@ class AutorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "Nome" => ["required", "string", "max:40"]
+            "Nome" => ["required", "string", "max:40"],
         ];
 
     }
 
-    public function messages():array{
+    /** @return array<string, string> */
+    public function messages(): array{
         return [
             "Nome.required" => "Nome do autor é um campo obrigatório!",
-            "Nome.max" => "Nome do autor possuí o limite de 40 caracteres."
+            "Nome.max" => "Nome do autor possuí o limite de 40 caracteres.",
         ];
     }
 }

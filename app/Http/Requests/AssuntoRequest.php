@@ -23,14 +23,15 @@ class AssuntoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "Descricao" => ['required', 'string', 'max:20']
+            "Descricao" => ['required', 'string', 'max:20'],
         ];
     }
 
-    public function messages():array{
-        return[
+    /** @return array<string, string> */
+    public function messages(): array{
+        return [
             "Descricao.required" => "A descrição é um campo obrigatório.",
-            "Descricao.max" => "Limite de campo estabelecido em 20 caracteres."
+            "Descricao.max" => "Limite de campo estabelecido em 20 caracteres.",
         ];
     }
 }

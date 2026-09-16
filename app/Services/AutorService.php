@@ -2,31 +2,36 @@
 
 namespace App\Services;
 
+use App\Exceptions\RegraNegocioException;
 use App\Models\Autor;
-
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class AutorService {
-
+    /** @return LengthAwarePaginator<int, Autor> */
     public function obter(int $porPagina = 10, ?string $busca = null): LengthAwarePaginator {
 
         $query = Autor::orderBy("Nome", "asc");
 
-        if($busca)
-            $query->where("Nome","like","%{$busca}%");
+        if ($busca) {
+            $query->where("Nome", "like", "%{$busca}%"); }
 
         return $query->paginate($porPagina);
     }
 
-    public function obterParaSelect(){
+    /** @return Collection<int, Autor> */
+    public function obterParaSelect(): Collection{
         return Autor::orderBy("Nome", "asc")->get();
     }
 
-    public function salvar(array $dados){
+    /** @param array<string, mixed> $dados */
+    public function salvar(array $dados): Autor{
         return Autor::create($dados);
     }
 
-    public function atualizar(int $id, array $dados){
+    /** @param array<string, mixed> $dados */
+    public function atualizar(int $id, array $dados): Autor{
         $autor = Autor::findOrFail($id);
         $autor->update($dados);
 
@@ -34,8 +39,13 @@ class AutorService {
 
     }
 
-    public function excluir(int $id){
-        $autor = Autor::findOrFail($id);
-        $autor->delete();
+    public function excluir(int $id): void{
+        DB::transaction(function () use ($id) {
+            $registro = Autor::query()->lockForUpdate()->findOrFail($id);
+            if ($registro->livros()->exists()) {
+                throw new RegraNegocioException("Não é possível excluir o autor enquanto houver livros vinculados.");
+            }
+            $registro->delete();
+        });
     }
 }
