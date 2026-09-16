@@ -2,6 +2,7 @@
 
 use App\Models\Assunto;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -22,22 +23,22 @@ it("Criar Assunto", function () {
 
 it('Recusa assunto com descrição vazia', function () {
     $this->post(route('assunto.store'), [
-        'Descricao' => ''
+        'Descricao' => '',
     ])
-    ->assertSessionHasErrors('Descricao'); // Garante que o AssuntoRequest barrou
+        ->assertSessionHasErrors('Descricao'); // Garante que o AssuntoRequest barrou
 });
 
 it('Atualizar assunto existente', function () {
     $assunto = Assunto::create(['Descricao' => 'Suspense']);
 
     $this->put(route('assunto.update', $assunto->codAs), [
-        'Descricao' => 'Terror'
+        'Descricao' => 'Terror',
     ])
-    ->assertRedirect(route('assunto.index'));
+        ->assertRedirect(route('assunto.index'));
 
-    $this->assertDatabaseHas('assunto', [
-        'CodAs' => $assunto->codAs,
-        'Descricao' => 'Terror'
+    $this->assertDatabaseHas('Assunto', [
+        'codAs' => $assunto->codAs,
+        'Descricao' => 'Terror',
     ]);
 });
 
@@ -45,11 +46,11 @@ it('Excluir assunto', function () {
     $assunto = Assunto::create(['Descricao' => 'Comédia']);
 
     $this->delete(route('assunto.destroy', $assunto->codAs))
-         ->assertRedirect(route('assunto.index'));
+        ->assertRedirect(route('assunto.index'));
 
     // Confirma se sumiu do banco
-    $this->assertDatabaseMissing('assunto', [
-        'CodAs' => $assunto->codAs
+    $this->assertDatabaseMissing('Assunto', [
+        'codAs' => $assunto->codAs,
     ]);
 });
 
@@ -62,7 +63,7 @@ it('Listagem de Assuntos com paginação', function () {
     $response->assertStatus(200);
 
     $response->assertViewHas('assuntos', function ($assuntos) {
-        expect($assuntos)->toBeInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class);
+        expect($assuntos)->toBeInstanceOf(LengthAwarePaginator::class);
         expect($assuntos->total())->toBe(15);
         expect($assuntos->lastPage())->toBe(2);
 
@@ -80,6 +81,6 @@ it('Buscar assunto pelo campo de busca', function () {
 
     // 3. Garante que achou o correto e filtrou o outro
     $response->assertStatus(200)
-             ->assertSee('Banco de Dados')
-             ->assertDontSee('Programação Web');
+        ->assertSee('Banco de Dados')
+        ->assertDontSee('Programação Web');
 });

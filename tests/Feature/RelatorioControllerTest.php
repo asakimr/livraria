@@ -25,7 +25,7 @@ beforeEach(function () {
         'Editora' => 'HarperCollins',
         'Edicao' => 1,
         'AnoPublicacao' => 1954,
-        'Valor' => 89.90
+        'Valor' => 89.90,
     ]);
 
     $this->livroTrono = Livro::create([
@@ -33,7 +33,7 @@ beforeEach(function () {
         'Editora' => 'Leya',
         'Edicao' => 1,
         'AnoPublicacao' => 1996,
-        'Valor' => 99.90
+        'Valor' => 99.90,
     ]);
 
     // 4. Vinculamos as relações (Isso alimenta a View SQL)
@@ -48,41 +48,41 @@ it('Acessar tela de relatórios e listar todos os registros', function () {
     $response = $this->get(route('relatorios.index'));
 
     $response->assertStatus(200)
-             ->assertSee('O Senhor dos Anéis')
-             ->assertSee('A Guerra dos Tronos')
-             ->assertSee('J.R.R. Tolkien')
-             ->assertSee('George R.R. Martin');
+        ->assertSee('O Senhor dos Anéis')
+        ->assertSee('A Guerra dos Tronos')
+        ->assertSee('J.R.R. Tolkien')
+        ->assertSee('George R.R. Martin');
 });
 
 it('Filtrar relatório por Autor específico', function () {
     $response = $this->get(route('relatorios.index', [
-        'autor_id' => $this->autorTolkien->CodAu
+        'autor_id' => $this->autorTolkien->CodAu,
     ]));
 
     $response->assertStatus(200)
-             ->assertSee('O Senhor dos Anéis')
-             ->assertDontSee('A Guerra dos Tronos'); // Não deve aparecer o livro do Martin
+        ->assertSee('O Senhor dos Anéis')
+        ->assertDontSee('A Guerra dos Tronos'); // Não deve aparecer o livro do Martin
 });
 
 it('Filtrar relatório por Título do Livro', function () {
     $response = $this->get(route('relatorios.index', [
-        'titulo' => 'Tronos'
+        'titulo' => 'Tronos',
     ]));
 
     $response->assertStatus(200)
-             ->assertSee('A Guerra dos Tronos')
-             ->assertDontSee('O Senhor dos Anéis');
+        ->assertSee('A Guerra dos Tronos')
+        ->assertDontSee('O Senhor dos Anéis');
 });
 
 it('Filtrar relatório por Assuntos (Múltiplos)', function () {
     // Busca por "Política" (Só o Guerra dos Tronos tem)
     $response = $this->get(route('relatorios.index', [
-        'assuntos' => [$this->assuntoPolitica->codAs]
+        'assuntos' => [$this->assuntoPolitica->codAs],
     ]));
 
     $response->assertStatus(200)
-             ->assertSee('A Guerra dos Tronos')
-             ->assertDontSee('O Senhor dos Anéis');
+        ->assertSee('A Guerra dos Tronos')
+        ->assertDontSee('O Senhor dos Anéis');
 });
 
 it('Exportar PDF e verificar se o DOMPDF gera o arquivo corretamente', function () {
@@ -103,9 +103,9 @@ it('Exportar PDF e verificar se o DOMPDF gera o arquivo corretamente', function 
 it('Garantir que os filtros aplicados na tela repassam para o PDF', function () {
     // Exportamos o PDF passando o filtro de Autor na URL
     $response = $this->get(route('relatorios.exportar', [
-        'autor_id' => $this->autorTolkien->CodAu
+        'autor_id' => $this->autorTolkien->CodAu,
     ]));
 
     $response->assertStatus(200)
-             ->assertHeader('Content-Type', 'application/pdf');
+        ->assertHeader('Content-Type', 'application/pdf');
 });

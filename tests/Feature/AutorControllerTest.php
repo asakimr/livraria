@@ -2,43 +2,43 @@
 
 use App\Models\Autor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-it("Listar autores no index", function(){
-   Autor::create(["Nome" => "Gustavo Pereira"]);
+it("Listar autores no index", function (){
+    Autor::create(["Nome" => "Gustavo Pereira"]);
 
-  $this->get(route("autor.index"))
-  ->assertStatus(200)
-  ->assertSee("Gustavo Pereira");
+    $this->get(route("autor.index"))
+        ->assertStatus(200)
+        ->assertSee("Gustavo Pereira");
 });
 
-it("Criar Autor", function(){
+it("Criar Autor", function (){
     $this->post(route("autor.store"), ["Nome" => "Renato Barreto"])
-    ->assertRedirect(route("autor.index"))
-    ->assertSessionHas("success");
+        ->assertRedirect(route("autor.index"))
+        ->assertSessionHas("success");
 });
-
 
 it('Recusa autor com nome vazio', function () {
     $this->post(route('autor.store'), [
-        'Nome' => ''
+        'Nome' => '',
     ])
-    ->assertSessionHasErrors('Nome'); // Garante que o FormRequest barrou
+        ->assertSessionHasErrors('Nome'); // Garante que o FormRequest barrou
 });
 
 it('Atualizar autor existente', function () {
     $autor = Autor::create(['Nome' => 'Guilherme Reis']);
 
     $this->put(route('autor.update', $autor->CodAu), [
-        'Nome' => 'Roger Amorim'
+        'Nome' => 'Roger Amorim',
     ])
-    ->assertRedirect(route('autor.index'));
+        ->assertRedirect(route('autor.index'));
 
-    $this->assertDatabaseHas('autor', [
+    $this->assertDatabaseHas('Autor', [
         'CodAu' => $autor->CodAu,
-        'Nome' => 'Roger Amorim'
+        'Nome' => 'Roger Amorim',
     ]);
 });
 
@@ -46,31 +46,30 @@ it('Excluir autor', function () {
     $autor = Autor::create(['Nome' => 'Rick Duarte']);
 
     $this->delete(route('autor.destroy', $autor->CodAu))
-         ->assertRedirect(route('autor.index'));
+        ->assertRedirect(route('autor.index'));
 
     // Confirma se sumiu do banco
-    $this->assertDatabaseMissing('autor', [
-        'CodAu' => $autor->CodAu
+    $this->assertDatabaseMissing('Autor', [
+        'CodAu' => $autor->CodAu,
     ]);
 });
 
-
 it('Listagem de Autores', function () {
     for ($i = 1; $i <= 15; $i++) {
-            Autor::create(['Nome' => "Autor Teste {$i}"]);
-        }
+        Autor::create(['Nome' => "Autor Teste {$i}"]);
+    }
 
-        $response = $this->get(route('autor.index'));
-        $response->assertStatus(200);
+    $response = $this->get(route('autor.index'));
+    $response->assertStatus(200);
 
-        $response->assertViewHas('autores', function ($autores) {
-            // Usando o expect() do Pest, se algo falhar aqui, a mensagem de erro será exata!
-            expect($autores)->toBeInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class);
-            expect($autores->total())->toBe(15);
-            expect($autores->lastPage())->toBe(2);
+    $response->assertViewHas('autores', function ($autores) {
+        // Usando o expect() do Pest, se algo falhar aqui, a mensagem de erro será exata!
+        expect($autores)->toBeInstanceOf(LengthAwarePaginator::class);
+        expect($autores->total())->toBe(15);
+        expect($autores->lastPage())->toBe(2);
 
-            return true;
-        });
+        return true;
+    });
 });
 
 it('Buscar autor pelo campo de busca', function () {
@@ -83,6 +82,6 @@ it('Buscar autor pelo campo de busca', function () {
 
     // 3. Garante que achou a Clarice, mas filtrou (escondeu) o Machado
     $response->assertStatus(200)
-             ->assertSee('Cesar Lemos')
-             ->assertDontSee('Flavio Castro');
+        ->assertSee('Cesar Lemos')
+        ->assertDontSee('Flavio Castro');
 });

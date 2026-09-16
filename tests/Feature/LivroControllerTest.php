@@ -17,12 +17,12 @@ it('Listar livros no index', function () {
         'Editora' => 'HarperCollins',
         'Edicao' => 1,
         'AnoPublicacao' => 1954,
-        'Valor' => 89.90
+        'Valor' => 89.90,
     ]);
 
     $this->get(route('livro.index'))
-         ->assertStatus(200)
-         ->assertSee('O Senhor dos Anéis');
+        ->assertStatus(200)
+        ->assertSee('O Senhor dos Anéis');
 });
 
 it('Listagem de Livros com paginação', function () {
@@ -32,7 +32,7 @@ it('Listagem de Livros com paginação', function () {
             'Editora' => 'Editora Teste',
             'Edicao' => 1,
             'AnoPublicacao' => 2020,
-            'Valor' => 50.00
+            'Valor' => 50.00,
         ]);
     }
 
@@ -43,6 +43,7 @@ it('Listagem de Livros com paginação', function () {
         expect($livros)->toBeInstanceOf(LengthAwarePaginator::class);
         expect($livros->total())->toBe(15);
         expect($livros->lastPage())->toBe(2);
+
         return true;
     });
 });
@@ -54,10 +55,9 @@ it('Buscar livro pelo campo de busca', function () {
     $response = $this->get(route('livro.index', ['search' => 'Harry']));
 
     $response->assertStatus(200)
-             ->assertSee('Harry Potter')
-             ->assertDontSee('Percy Jackson');
+        ->assertSee('Harry Potter')
+        ->assertDontSee('Percy Jackson');
 });
-
 
 // --- TESTES DE CRIAÇÃO (STORE) E VALIDAÇÃO ---
 
@@ -72,38 +72,37 @@ it('Criar Livro com relacionamentos N:N e formatar valor', function () {
         'AnoPublicacao' => 1937,
         'Valor' => '59,90', // Testando se o Request converte a vírgula
         'autores' => [$autor->CodAu],
-        'assuntos' => [$assunto->codAs]
+        'assuntos' => [$assunto->codAs],
     ]);
 
     $response->assertRedirect(route('livro.index'))
-             ->assertSessionHas('success');
+        ->assertSessionHas('success');
 
     // Confirma tabela principal
-    $this->assertDatabaseHas('livro', [
+    $this->assertDatabaseHas('Livro', [
         'Titulo' => 'O Hobbit',
-        'Valor' => 59.90 // Confirma que salvou com ponto decimal
+        'Valor' => 59.90, // Confirma que salvou com ponto decimal
     ]);
 
     // Confirma se salvou na Pivot de Autores
     $this->assertDatabaseHas('Livro_Autor', [
-        'Autor_CodAu' => $autor->CodAu
+        'Autor_CodAu' => $autor->CodAu,
     ]);
 
     // Confirma se salvou na Pivot de Assuntos
     $this->assertDatabaseHas('Livro_Assunto', [
-        'Assunto_codAs' => $assunto->codAs
+        'Assunto_codAs' => $assunto->codAs,
     ]);
 });
 
 it('Recusa livro com campos obrigatórios e relacionamentos faltando', function () {
     $response = $this->post(route('livro.store'), [
-        'Titulo' => ''
+        'Titulo' => '',
         // Omitindo editora, ano, valor, autores e assuntos de propósito
     ]);
 
     $response->assertSessionHasErrors(['Titulo', 'Editora', 'Edicao', 'AnoPublicacao', 'Valor', 'autores', 'assuntos']);
 });
-
 
 // --- TESTES DE ATUALIZAÇÃO (UPDATE) E EXCEÇÕES ---
 
@@ -126,12 +125,12 @@ it('Atualizar livro e alterar seus relacionamentos', function () {
         'AnoPublicacao' => 2024,
         'Valor' => '200,00',
         'autores' => [$autorNovo->CodAu], // Trocando o autor
-        'assuntos' => [$assunto->codAs]
+        'assuntos' => [$assunto->codAs],
     ]);
 
     $response->assertRedirect(route('livro.index'));
 
-    $this->assertDatabaseHas('livro', ['Titulo' => 'Martial Warriors']);
+    $this->assertDatabaseHas('Livro', ['Titulo' => 'Martial Warriors']);
 
     // Garante que o autor novo entrou
     $this->assertDatabaseHas('Livro_Autor', ['Autor_CodAu' => $autorNovo->CodAu]);
@@ -152,14 +151,13 @@ it('Redireciona e avisa ao tentar editar livro com ID inexistente', function () 
         'AnoPublicacao' => 2024,
         'Valor' => '10,00',
         'autores' => [$autor->CodAu],
-        'assuntos' => [$assunto->codAs]
+        'assuntos' => [$assunto->codAs],
     ]);
 
     // Como você programou, deve ir para index e mandar mensagem de erro
     $response->assertRedirect(route('livro.index'))
-             ->assertSessionHas('error', 'O livro que você tentou editar não foi encontrado no sistema.');
+        ->assertSessionHas('error', 'O livro que você tentou editar não foi encontrado no sistema.');
 });
-
 
 // --- TESTES DE EXCLUSÃO (DESTROY) ---
 
@@ -172,16 +170,16 @@ it('Excluir livro e limpar suas dependências Pivot', function () {
     $response = $this->delete(route('livro.destroy', $livro->Codl));
 
     $response->assertRedirect(route('livro.index'))
-             ->assertSessionHas('success');
+        ->assertSessionHas('success');
 
     // Confirma que apagou da tabela principal
-    $this->assertDatabaseMissing('livro', [
-        'Codl' => $livro->Codl
+    $this->assertDatabaseMissing('Livro', [
+        'Codl' => $livro->Codl,
     ]);
 
     // Confirma que apagou da pivot
     $this->assertDatabaseMissing('Livro_Autor', [
-        'Livro_Codl' => $livro->Codl // Ajuste para o nome da sua Foreign Key se for diferente
+        'Livro_Codl' => $livro->Codl, // Ajuste para o nome da sua Foreign Key se for diferente
     ]);
 });
 
@@ -190,5 +188,5 @@ it('Redireciona e avisa ao tentar excluir livro inexistente', function () {
     $response = $this->delete(route('livro.destroy', 99999));
 
     $response->assertRedirect(route('livro.index'))
-             ->assertSessionHas('error', 'O livro que você tentou excluir já não existe no sistema.');
+        ->assertSessionHas('error', 'O livro que você tentou excluir já não existe no sistema.');
 });
