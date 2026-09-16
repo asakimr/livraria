@@ -47,7 +47,10 @@
                             data-titulo="{{ $livro->Titulo }}"
                             data-editora="{{ $livro->Editora }}"
                             data-edicao="{{ $livro->Edicao }}"
-                            data-ano="{{ $livro->AnoPublicacao }}">
+                            data-ano="{{ $livro->AnoPublicacao }}"
+                            data-valor="{{ $livro->Valor }}"
+                            data-autores='{{ $livro->autores->pluck("CodAu") }}'
+                            data-assuntos='{{ $livro->assuntos->pluck("codAs") }}'>
                             <i class="bi bi-pencil"></i>
                         </button>
 
@@ -77,7 +80,7 @@
     </x-card-table>
 
     {{-- Modal para adicionar novos livros --}}
-    <x-modal id="modalNovoLivro" title="Cadastrar Novo Livro">
+    <x-modal id="modalNovoLivro" title="Cadastrar Novo Livro" size="modal-lg">
         <form action="{{ route('livro.store') }}" method="POST">
             @csrf
 
@@ -101,6 +104,42 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Autores" class="form-label text-primary fw-semibold">Autores <span class="text-danger">*</span></label>
+                    <select name="autores[]" id="Autores" class="form-control choices-multiple" multiple required>
+                        @foreach($autores as $autor)
+                            <option value="{{ $autor->CodAu }}">{{ $autor->Nome }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="Assuntos" class="form-label text-primary fw-semibold">Assuntos <span class="text-danger">*</span></label>
+                    <select name="assuntos[]" id="Assuntos" class="form-control choices-multiple" multiple required>
+                        @foreach($assuntos as $assunto)
+                            <option value="{{ $assunto->codAs }}">{{ $assunto->Descricao }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-3">
+                    <label for="Valor" class="form-label text-primary fw-semibold">Valor do Livro <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light fw-bold text-primary">R$</span>
+                        <!-- Se for edição, converte o 59.90 do banco de volta para 59,90 visualmente -->
+                        <input type="text" name="Valor" id="Valor" class="form-control mascara-dinheiro @error('Valor') is-invalid @enderror"
+                            value="{{ old('Valor') }}"
+                            required placeholder="0,00">
+                    </div>
+                    @error('Valor')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
             <div class="d-flex justify-content-end gap-2 mt-4">
                 <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit" class="btn btn-secondary text-white">Salvar</button>
@@ -109,7 +148,7 @@
     </x-modal>
 
     {{-- Modal para editar os livros --}}
-    <x-modal id="modalEditarLivro" title="Editar Livro">
+    <x-modal id="modalEditarLivro" title="Editar Livro" size="modal-lg">
         <form id="formEditarLivro" method="POST" action="{{ route('livro.update', 'ID_FALSO') }}">
             @csrf
             @method('PUT')
@@ -134,6 +173,42 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="editAutores" class="form-label text-primary fw-semibold">Autores <span class="text-danger">*</span></label>
+                    <select name="autores[]" id="editAutores" class="form-control choices-multiple" multiple required>
+                        @foreach($autores as $autor)
+                            <option value="{{ $autor->CodAu }}">{{ $autor->Nome }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="editAssuntos" class="form-label text-primary fw-semibold">Assuntos <span class="text-danger">*</span></label>
+                    <select name="assuntos[]" id="editAssuntos" class="form-control choices-multiple" multiple required>
+                        @foreach($assuntos as $assunto)
+                            <option value="{{ $assunto->codAs }}">{{ $assunto->Descricao }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-3">
+                    <label for="editValor" class="form-label text-primary fw-semibold">Valor do Livro <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light fw-bold text-primary">R$</span>
+                        <!-- Se for edição, converte o 59.90 do banco de volta para 59,90 visualmente -->
+                        <input type="text" name="Valor" id="editValor" class="form-control mascara-dinheiro @error('Valor') is-invalid @enderror"
+                            value="{{ old('Valor') }}"
+                            required placeholder="0,00">
+                    </div>
+                    @error('Valor')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
             <div class="d-flex justify-content-end gap-2 mt-4">
                 <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit" class="btn btn-secondary text-white">Atualizar</button>
@@ -143,34 +218,98 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+
+            // 1. Inicializar o Choices.js e guardar as instâncias
+            const escolhasInstances = {}; // Objeto para guardar as instâncias
+            const selectsMultiplos = document.querySelectorAll('.choices-multiple');
+
+            selectsMultiplos.forEach(function (select) {
+                // Inicializa e guarda a instância usando o ID do select como chave
+                escolhasInstances[select.id] = new Choices(select, {
+                    removeItemButton: true,
+                    searchEnabled: true,
+                    placeholder: true,
+                    placeholderValue: 'Selecione os itens...',
+                    noResultsText: 'Nenhum item encontrado',
+                    itemSelectText: 'Enter',
+                    noChoicesText: "Opção de seleção não disponível.",
+                    fuseOptions: {
+                        threshold: 0.1,
+                        distance: 1000
+                    }
+                });
+            });
+
+            // 2. Preencher o Modal de Edição
             const modalEditar = document.getElementById('modalEditarLivro');
 
             if (modalEditar) {
                 modalEditar.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
 
-                    // Coleta os dados do botão
+                    // Coleta os dados simples
                     const id = button.getAttribute('data-id');
                     const titulo = button.getAttribute('data-titulo');
                     const editora = button.getAttribute('data-editora');
                     const edicao = button.getAttribute('data-edicao');
                     const ano = button.getAttribute('data-ano');
+                    const valor = button.getAttribute('data-valor');
 
-                    // Seleciona o form e os inputs
+                    // Coleta os arrays do N:N (Autores e Assuntos)
+                    const autoresIds = JSON.parse(button.getAttribute('data-autores') || '[]');
+                    const assuntosIds = JSON.parse(button.getAttribute('data-assuntos') || '[]');
+
+                    // Atualiza a Rota
                     const form = document.getElementById('formEditarLivro');
-
-                    // Magia da rota segura: troca o ID_FALSO pelo ID real
                     const urlBase = form.action;
-                    // Previne que a URL fique com múltiplos IDs se o modal for aberto várias vezes
                     form.action = urlBase.replace(/livro\/\d+|livro\/ID_FALSO/, `livro/${id}`);
 
-                    // Preenche os campos
+                    // Preenche os inputs de texto
                     document.getElementById('editTitulo').value = titulo;
                     document.getElementById('editEditora').value = editora;
                     document.getElementById('editEdicao').value = edicao;
                     document.getElementById('editAnoPublicacao').value = ano;
+
+                    // Formata o valor monetário de volta para o padrão BR (opcional, caso tenha passado)
+                    if(valor) {
+                        document.getElementById('editValor').value = parseFloat(valor).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                    }
+
+                    // Mágica do Choices.js para os selects múltiplos
+                    const choicesAutores = escolhasInstances['editAutores'];
+                    const choicesAssuntos = escolhasInstances['editAssuntos'];
+
+                    if(choicesAutores && choicesAssuntos) {
+                        // 1º Removemos as seleções anteriores (para não misturar se abrir 2 livros seguidos)
+                        choicesAutores.removeActiveItems();
+                        choicesAssuntos.removeActiveItems();
+
+                        // 2º Convertemos os IDs para string (o HTML entende value como string)
+                        const autoresFormatados = autoresIds.map(String);
+                        const assuntosFormatados = assuntosIds.map(String);
+
+                        // 3º Setamos os valores corretos no componente
+                        choicesAutores.setChoiceByValue(autoresFormatados);
+                        choicesAssuntos.setChoiceByValue(assuntosFormatados);
+                    }
                 });
             }
-        });
+
+            // 3. Máscara de Dinheiro
+            const inputsDinheiro = document.querySelectorAll('.mascara-dinheiro');
+
+            inputsDinheiro.forEach(function(input) {
+                input.addEventListener('input', function (e) {
+                    let valor = e.target.value;
+                    valor = valor.replace(/\D/g, "");
+                    valor = (valor / 100).toFixed(2) + '';
+                    valor = valor.replace(".", ",");
+                    valor = valor.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+                    e.target.value = valor;
+                });
+            });
+
+        }); // FINAL DO EVENTO
     </script>
+
 @endsection

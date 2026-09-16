@@ -27,7 +27,7 @@
                 <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{url('/')}}"><i class="bi bi-house-door"></i> Início</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('livro.*') ? 'active' : '' }}" href="#"><i class="bi bi-book"></i> Livros</a>
+                <a class="nav-link {{ request()->routeIs('livro.*') ? 'active' : '' }}" href="{{route('livro.index')}}"><i class="bi bi-book"></i> Livros</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('autor.*') ? 'active' : '' }}" href="{{route('autor.index')}}"><i class="bi bi-person-lines-fill"></i> Autores</a>

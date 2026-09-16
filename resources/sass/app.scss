@@ -1,5 +1,6 @@
 @import 'variables';
 @import 'bootstrap/scss/bootstrap';
+@import 'choices.js/public/assets/styles/choices.min.css';
 
 body {
     display: flex;
@@ -33,4 +34,28 @@ body {
 .sidebar-nav .nav-link:hover, .sidebar-nav .nav-link.active {
     color: white;
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+// CHOICESJS
+
+.choices__list--multiple .choices__item {
+    background-color: $secondary;
+    border: 1px solid darken($secondary, 10%);
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+// 2. Linha divisória do X
+.choices[data-type*="select-multiple"] .choices__button {
+    border-left: 1px solid darken($secondary, 10%);
+}
+
+// 3. Efeito hover
+.choices[data-type*="select-multiple"] .choices__button:hover {
+    background-color: darken($secondary, 15%);
+}
+
+// Foco ao clicar no badge
+.choices.is-focused.is-open::after {
+    border-color: $secondary transparent transparent transparent;
 }

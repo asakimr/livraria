@@ -1,7 +1,7 @@
-@props(['id', 'title'])
+@props(['id', 'title', 'size'])
 
 <div class="modal fade" id="{{ $id }}" tabindex="-1" aria-labelledby="{{ $id }}Label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered {{ $size ?? '' }}">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-primary text-white border-0">
                 <h5 class="modal-title fw-semibold" id="{{ $id }}Label">{{ $title }}</h5>
