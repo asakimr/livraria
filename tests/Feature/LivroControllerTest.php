@@ -56,7 +56,15 @@ it('Buscar livro pelo campo de busca', function () {
 
     $response->assertStatus(200)
         ->assertSee('Harry Potter')
-        ->assertDontSee('Percy Jackson');
+        ->assertDontSee('Percy Jackson')
+        ->assertSee('value="Harry"', false)
+        ->assertSee('href="'.route('livro.index').'" class="btn btn-light border px-4">Limpar</a>', false);
+
+    $this->get(route('livro.index'))->assertOk()
+        ->assertSee('Harry Potter')
+        ->assertSee('Percy Jackson')
+        ->assertSee('value=""', false)
+        ->assertDontSee('>Limpar</a>', false);
 });
 
 // --- TESTES DE CRIAÇÃO (STORE) E VALIDAÇÃO ---

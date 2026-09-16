@@ -83,5 +83,13 @@ it('Buscar autor pelo campo de busca', function () {
     // 3. Garante que achou a Clarice, mas filtrou (escondeu) o Machado
     $response->assertStatus(200)
         ->assertSee('Cesar Lemos')
-        ->assertDontSee('Flavio Castro');
+        ->assertDontSee('Flavio Castro')
+        ->assertSee('value="Cesar"', false)
+        ->assertSee('href="'.route('autor.index').'" class="btn btn-light border px-4">Limpar</a>', false);
+
+    $this->get(route('autor.index'))->assertOk()
+        ->assertSee('Cesar Lemos')
+        ->assertSee('Flavio Castro')
+        ->assertSee('value=""', false)
+        ->assertDontSee('>Limpar</a>', false);
 });

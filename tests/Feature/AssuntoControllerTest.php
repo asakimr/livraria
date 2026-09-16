@@ -82,5 +82,13 @@ it('Buscar assunto pelo campo de busca', function () {
     // 3. Garante que achou o correto e filtrou o outro
     $response->assertStatus(200)
         ->assertSee('Banco de Dados')
-        ->assertDontSee('Programação Web');
+        ->assertDontSee('Programação Web')
+        ->assertSee('value="Banco"', false)
+        ->assertSee('href="'.route('assunto.index').'" class="btn btn-light border px-4">Limpar</a>', false);
+
+    $this->get(route('assunto.index'))->assertOk()
+        ->assertSee('Banco de Dados')
+        ->assertSee('Programação Web')
+        ->assertSee('value=""', false)
+        ->assertDontSee('>Limpar</a>', false);
 });

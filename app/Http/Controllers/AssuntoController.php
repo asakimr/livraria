@@ -25,7 +25,7 @@ class AssuntoController extends Controller
 
         $assuntos = $this->assuntoService->obter(10, $busca);
 
-        return view("assunto.index", compact("assuntos"));
+        return view("assunto.index", compact("assuntos", "busca"));
     }
 
     /**

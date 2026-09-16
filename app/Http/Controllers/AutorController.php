@@ -21,7 +21,7 @@ class AutorController extends Controller
 
         $autores = $this->autorService->obter(10, $busca);
 
-        return view("autor.index", compact("autores"));
+        return view("autor.index", compact("autores", "busca"));
     }
 
     public function store(AutorRequest $request): RedirectResponse{
