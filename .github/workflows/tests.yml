@@ -64,3 +64,11 @@ jobs:
           DB_USERNAME: livraria_test
           DB_PASSWORD: test_only
           DB_URL: ''
+
+      - name: Archive frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build-${{ matrix.database }}
+          path: public/build/
+          if-no-files-found: error
+          retention-days: 7

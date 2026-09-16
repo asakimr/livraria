@@ -67,8 +67,10 @@ Migrations já aplicadas não são reaplicadas automaticamente quando seu arquiv
 
 O GitHub Actions prepara PHP/Node, executa build, Pint, PHPStan e Pest, em matriz SQLite/MySQL descartável. Credenciais do serviço são exclusivas do ambiente de CI.
 
-Não há Jenkinsfile nem integração SonarQube versionados neste checkout. O quality check do GitHub Actions é a automação de referência; uma integração externa só deve ser documentada depois de configurada e executada.
+O GitHub Actions é a automação de referência. O `Jenkinsfile` oferece uma alternativa declarativa: checkout, preparação, verificações, SonarQube opcional e arquivamento do build. O agente Jenkins precisa de PHP e extensões, Composer, Node/npm e acesso ao repositório. Para SonarQube, são necessários também SonarScanner no PATH, `SONAR_HOST_URL` e a credencial secret text `livraria-sonar-token`; a execução é habilitada pelo parâmetro `RUN_SONAR`. Consulte [qualidade e testes](qualidade.md).
 
-O pipeline guarda public/build como artefato depois das verificações. Esse artefato contém somente assets; não é um pacote completo do backend. Não há deploy automático em produção nem conexão com servidor de terceiros.
+O workflow está configurado para guardar `public/build` depois das verificações, com artefatos `frontend-build-sqlite` e `frontend-build-mysql` e retenção de sete dias. O Jenkinsfile também prevê arquivamento dos assets. Eles não são um pacote completo do backend. Não há deploy automático em produção nem conexão com servidor de terceiros.
+
+Esses arquivos descrevem como executar as esteiras; sua presença não comprova execução remota, análise SonarQube ou quality gate aprovado. Confirme os logs de uma execução antes de apresentar esses resultados na entrevista.
 
 Uma implantação pública exigiria selecionar o destino, web server com raiz em public, PHP-FPM, TLS, APP_DEBUG=false, credenciais próprias, permissões de storage/bootstrap/cache e política de acesso. Nenhum desses serviços externos foi instalado ou publicado por estes arquivos.
