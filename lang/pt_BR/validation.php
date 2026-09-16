@@ -1,0 +1,41 @@
+<?php
+
+return [
+    'required' => 'O campo :attribute é obrigatório.',
+    'string' => 'O campo :attribute deve ser um texto.',
+    'integer' => 'O campo :attribute deve ser um número inteiro.',
+    'numeric' => 'O campo :attribute deve ser um número.',
+    'array' => 'O campo :attribute deve ser uma lista.',
+    'exists' => 'O valor selecionado para :attribute é inválido.',
+    'distinct' => 'O campo :attribute possui um valor repetido.',
+    'digits' => 'O campo :attribute deve ter :digits dígitos.',
+    'regex' => 'O formato do campo :attribute é inválido.',
+    'decimal' => 'O campo :attribute deve ter :decimal casas decimais.',
+    'min' => [
+        'numeric' => 'O campo :attribute deve ser pelo menos :min.',
+        'string' => 'O campo :attribute deve ter pelo menos :min caracteres.',
+        'array' => 'O campo :attribute deve ter pelo menos :min item.',
+    ],
+    'max' => [
+        'numeric' => 'O campo :attribute não pode ser maior que :max.',
+        'string' => 'O campo :attribute não pode ter mais que :max caracteres.',
+        'array' => 'O campo :attribute não pode ter mais que :max itens.',
+    ],
+    'attributes' => [
+        'Titulo' => 'título',
+        'Editora' => 'editora',
+        'Edicao' => 'edição',
+        'AnoPublicacao' => 'ano de publicação',
+        'Valor' => 'valor',
+        'Nome' => 'nome',
+        'Descricao' => 'descrição',
+        'autores' => 'autores',
+        'autores.*' => 'autor',
+        'assuntos' => 'assuntos',
+        'assuntos.*' => 'assunto',
+        'autor_id' => 'autor',
+        'titulo' => 'título',
+        'search' => 'busca',
+        'page' => 'página',
+    ],
+];
