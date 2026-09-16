@@ -42,6 +42,7 @@ npm run build
 - [Banco de dados, objetos e decisões](docs/banco-de-dados.md)
 - [API e exemplos de requisição](docs/api.md)
 - [Instalação, Docker, CI e implantação](docs/implantacao.md)
+- [Qualidade e testes](docs/qualidade.md)
+- [Backlog, critérios de aceite e pendências](docs/backlog.md)
 
 O ano de publicação permanece inteiro por decisão do projeto, com justificativa documentada.
-

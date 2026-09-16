@@ -32,11 +32,3 @@ A configuração padrão utiliza SQLite `:memory:`. O workflow do GitHub também
 A suíte deve preservar: CRUD web/API, validações, moeda após erro de outro campo, preço decimal na API, recuperação de modal, relatório com autores homônimos, bloqueio de exclusões vinculadas, rollback da view e erros JSON. Testes unitários verificam regras isoladas; testes funcionais verificam a integração com Laravel e banco.
 
 A execução automatizada não substitui a inspeção humana de máscaras, foco, modais e PDF. Não é alegado TDD retroativo: os testes de regressão foram adicionados durante a correção.
-
-## SonarQube
-
-`sonar-project.properties` define fontes e testes. Para análise opcional, disponibilize um servidor, SonarScanner e as variáveis `SONAR_HOST_URL` e `SONAR_TOKEN`, depois execute `sonar-scanner -Dsonar.qualitygate.wait=true`.
-
-No Jenkins, habilite RUN_SONAR e cadastre a credencial secret text `livraria-sonar-token`; o plugin Credentials Binding injeta o token. O scanner precisa estar no PATH do agente e SONAR_HOST_URL configurada no ambiente. Não grave tokens no repositório.
-
-Cobertura não é gerada ou declarada por esta configuração. Um servidor Sonar, resultado de análise ou quality gate aprovado só pode ser afirmado após execução efetiva.
