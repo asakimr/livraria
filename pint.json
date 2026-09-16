@@ -1,3 +1,10 @@
 {
-    "preset": "laravel"
+    "preset": "laravel",
+    "rules": {
+        "single_quote": false,
+        "braces_position": false,
+        "class_definition": false,
+        "function_declaration": false,
+        "single_line_comment_style": false
+    }
 }

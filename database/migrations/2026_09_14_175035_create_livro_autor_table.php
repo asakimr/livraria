@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('Livro_Codl', 'Livro_Autor_FKIndex1')->references('Codl')->on('Livro')->onDelete('cascade');
             $table->foreign('Autor_CodAu', 'Livro_Autor_FKIndex2')->references('CodAu')->on('Autor')->onDelete('cascade');
 
-            $table->primary(["Livro_Codl","Autor_CodAu"]);
+            $table->primary(["Livro_Codl", "Autor_CodAu"]);
         });
     }
 
