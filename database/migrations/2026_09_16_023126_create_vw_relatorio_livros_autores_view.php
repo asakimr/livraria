@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
@@ -11,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        #Resolve problema de comaptibilidade do Fresh/Refresh com SQLite e MySQL;
+        # Resolve problema de comaptibilidade do Fresh/Refresh com SQLite e MySQL;
         DB::statement("DROP VIEW IF EXISTS vw_relatorio_livros_autores");
 
         DB::statement("
@@ -39,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vw_relatorio_livros_autores');
+        DB::statement('DROP VIEW IF EXISTS vw_relatorio_livros_autores');
     }
 };

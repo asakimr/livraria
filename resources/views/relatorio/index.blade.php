@@ -61,9 +61,9 @@
     <!-- Tabela de Preview -->
     <div class="card shadow-sm">
         <div class="card-body p-0">
-            @forelse($autoresAgrupados as $autorNome => $livros)
+            @forelse($autoresAgrupados as $autorId => $livros)
                 <div class="bg-light p-3 border-bottom border-top">
-                    <h6 class="mb-0 text-primary fw-bold"><i class="bi bi-person-lines-fill me-2"></i>{{ $autorNome }}</h6>
+                    <h6 class="mb-0 text-primary fw-bold"><i class="bi bi-person-lines-fill me-2"></i>{{ $livros->first()->Autor_Nome }}</h6>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover table-borderless mb-0">
@@ -105,8 +105,11 @@
                     removeItemButton: true,
                     searchEnabled: true,
                     placeholder: true,
-                    placeholderValue: 'Ex: Ficcao Cientifica',
-                    itemSelectText: 'Enter',
+                    placeholderValue: 'Ex: Ficção Científica',
+                    itemSelectText: 'Pressione Enter para selecionar',
+                    noResultsText: 'Nenhum item encontrado',
+                    removeItemLabelText: 'Remover item',
+                    loadingText: 'Carregando...',
                     noChoicesText: "Opção indisponível.",
                     fuseOptions: {
                         threshold: 0.1,

@@ -39,11 +39,6 @@
             color: #666666;
         }
 
-        /* 4. Mágica do DOMPDF: Numeração automática de páginas */
-        .page-number:after {
-            content: "Página " counter(page) " de " counter(pages);
-        }
-
         /* Tabelas Auxiliares de Layout */
         .layout-table {
             width: 100%;
@@ -136,18 +131,18 @@
         <table class="layout-table">
             <tr>
                 <td>Gerado em: {{ date('d/m/Y \à\s H:i') }}</td>
-                <td style="text-align: right;" class="page-number"></td>
+                <td></td>
             </tr>
         </table>
     </footer>
 
     <!-- A tag MAIN vai empurrar o conteúdo automaticamente para baixo do Header -->
     <main>
-        @forelse($autoresAgrupados as $autorNome => $livros)
+        @forelse($autoresAgrupados as $autorId => $livros)
             <div class="autor-section">
                 <!-- Faixa com o Nome do Autor -->
                 <div class="autor-badge">
-                    {{ $autorNome }}
+                    {{ $livros->first()->Autor_Nome }}
                 </div>
 
                 <!-- Tabela de Livros daquele Autor -->
