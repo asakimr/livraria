@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('Editora', 40);
             $table->integer('Edicao');
 
-            $table->year("AnoPublicacao");
+            $table->integer ("AnoPublicacao");
             $table->decimal('Valor', 8, 2);
 
         });
