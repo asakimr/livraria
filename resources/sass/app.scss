@@ -19,6 +19,7 @@ body {
 
 .main-content {
     flex-grow: 1;
+    min-width: 0;
     padding: 2rem;
 }
 
@@ -104,4 +105,20 @@ body {
 .choices[data-type*="select-multiple"] .choices__inner::-webkit-scrollbar-thumb {
     background: #ced4da;
     border-radius: 4px;
+}
+
+// No celular, o menu abre acima do conteúdo sem ocupar a largura das telas.
+@include media-breakpoint-down(md) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .main-content {
+        width: 100%;
+        padding: 1rem;
+    }
 }

@@ -13,10 +13,21 @@
 </head>
 <body>
 
+    <header class="d-flex d-md-none align-items-center justify-content-between bg-primary p-3">
+        <a href="{{ url('/') }}" class="text-decoration-none" aria-label="Livraria Spassu — início">
+            <span class="text-white small d-block">LIVRARIA</span>
+            <span class="text-secondary fs-4 fw-bold">Spassu</span>
+        </a>
+        <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse"
+            data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false">
+            <i class="bi bi-list me-1" aria-hidden="true"></i> Menu
+        </button>
+    </header>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar shadow-lg">
+    <aside id="menuPrincipal" class="sidebar collapse d-md-flex shadow-lg">
         <!-- Logo / Brand -->
-        <a href="/" class="text-decoration-none p-4 d-flex flex-column">
+        <a href="/" class="text-decoration-none p-4 d-none d-md-flex flex-column">
             <span class="text-white opacity-75" style="font-size: 0.9rem; line-height: 1; text-transform: uppercase; letter-spacing: 1px;">Livraria</span>
             <span class="text-secondary fw-bold" style="font-size: 2rem; line-height: 1;">Spassu</span>
         </a>

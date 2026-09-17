@@ -8,7 +8,7 @@
         <div class="card-body">
             <form action="{{ route('relatorios.index') }}" method="GET" class="row align-items-end">
 
-                <div class="col-md-3 mb-3 mb-md-0">
+                <div class="col-12 col-xl-3 mb-3 mb-xl-0">
                     <label for="autor_id" class="form-label fw-semibold">Autor</label>
                     <select name="autor_id" id="autor_id" class="form-select">
                         <option value="">Todos os Autores</option>
@@ -20,8 +20,7 @@
                     </select>
                 </div>
 
-                <!-- NOVO: Campo de Assuntos com Choices.js -->
-                <div class="col-md-3 mb-3 mb-md-0">
+                <div class="col-12 col-xl-3 mb-3 mb-xl-0">
                     <label for="assuntos" class="form-label fw-semibold">Assuntos</label>
                     <select name="assuntos[]" id="assuntos" class="form-control choices-multiple" multiple>
                         @foreach($assuntos as $assunto)
@@ -33,12 +32,12 @@
                     </select>
                 </div>
 
-                <div class="col-md-3 mb-3 mb-md-0">
+                <div class="col-12 col-xl-3 mb-3 mb-xl-0">
                     <label for="titulo" class="form-label fw-semibold">Título do Livro</label>
                     <input type="text" name="titulo" id="titulo" class="form-control" placeholder="Buscar por título..." value="{{ request('titulo') }}">
                 </div>
 
-                <div class="col-md-3 d-flex gap-2">
+                <div class="col-12 col-xl-3 d-flex gap-2">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="bi bi-search"></i> Filtrar
                     </button>
@@ -49,11 +48,10 @@
     </div>
 
     <!-- Cabeçalho da Tabela com Botão de Exportar -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
         <h5 class="mb-0 text-secondary">Pré-visualização dos Dados</h5>
 
-        <!-- O truque mestre: o request()->all() passa os filtros atuais para a rota do PDF -->
-        <a href="{{ route('relatorios.exportar', request()->all()) }}" class="btn btn-danger" target="_blank">
+        <a href="{{ route('relatorios.exportar', request()->all()) }}" class="btn btn-danger text-nowrap" target="_blank">
             <i class="bi bi-file-earmark-pdf"></i> Exportar para PDF
         </a>
     </div>
