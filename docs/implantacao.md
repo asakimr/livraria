@@ -61,7 +61,7 @@ Antes de atualizar uma instalação com dados, faça backup do banco, .env e arq
 
 Não use migrate:fresh para atualizar uma instalação: ele remove tabelas. Reversão de código não restaura dados; recupere o backup se uma migration destrutiva tiver sido aplicada.
 
-Migrations já aplicadas não são reaplicadas automaticamente quando seu arquivo é editado. Nesta adequação, o ajuste do down da view corrige a reversão futura; não exige apagar ou recriar o banco atual.
+Migrations já aplicadas não são reaplicadas automaticamente quando seu arquivo é editado. O método `down()` da migration da view remove apenas a view durante o rollback.
 
 ## Integração contínua
 
@@ -71,6 +71,6 @@ O GitHub Actions é a automação de referência. Consulte [qualidade e testes](
 
 O workflow está configurado para guardar `public/build` depois das verificações, com artefatos `frontend-build-sqlite` e `frontend-build-mysql` e retenção de sete dias. Esses assets não são um pacote completo do backend. Não há deploy automático em produção nem conexão com servidor de terceiros.
 
-A configuração do workflow não comprova execução remota. Confirme os logs de uma execução antes de apresentar a esteira como aprovada.
+O histórico e os resultados das execuções estão disponíveis no [GitHub Actions](https://github.com/asakimr/livraria/actions).
 
-Uma implantação pública exigiria selecionar o destino, web server com raiz em public, PHP-FPM, TLS, APP_DEBUG=false, credenciais próprias, permissões de storage/bootstrap/cache e política de acesso. Nenhum desses serviços externos foi instalado ou publicado por estes arquivos.
+Uma implantação pública exigiria selecionar o destino, web server com raiz em public, PHP-FPM, TLS, APP_DEBUG=false, credenciais próprias, permissões de storage/bootstrap/cache e política de acesso. A configuração incluída no projeto atende ao ambiente local de desenvolvimento e demonstração.

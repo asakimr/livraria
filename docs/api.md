@@ -72,7 +72,7 @@ Erros de campo usam o formato:
 
 O texto exato depende da regra violada. Os nomes dos campos preservam a escrita do projeto.
 
-## Reproduzir a validação de lista
+## Validação de listas
 
 No ambiente local de demonstração, envie um objeto JSON em `autores` em vez de uma lista:
 
@@ -82,8 +82,8 @@ curl -i http://localhost:8777/api/livros \
   -d '{"Titulo":"Teste de validacao","Editora":"Demonstracao","Edicao":1,"AnoPublicacao":2026,"Valor":"59.90","autores":{"x":1},"assuntos":[1]}'
 ```
 
-O esperado é HTTP **422**, com uma mensagem em português em `errors.autores` explicando que o campo deve ser uma lista. Antes da correção da tradução da regra `list`, esse campo mostrava literalmente `validation.list`. O erro de apresentação não fazia o cadastro ser aceito: a validação já rejeitava a entrada.
+A API retorna HTTP **422**, com uma mensagem em português em `errors.autores` explicando que o campo deve ser uma lista. A requisição é rejeitada antes da persistência, sem criar um livro.
 
-Em JSON, `[1]` é uma lista; `{"x":1}` é um objeto com chave nomeada. O PHP transforma esse objeto em array associativo: a regra `array` aceita a estrutura, mas `list` exige índices consecutivos iniciando em zero. A interface normalmente envia uma lista correta; por isso a reprodução direta pela API é mais simples.
+Em JSON, `[1]` é uma lista; `{"x":1}` é um objeto com chave nomeada. O PHP transforma esse objeto em array associativo: a regra `array` aceita a estrutura, mas `list` exige índices consecutivos iniciando em zero. O formulário web envia os IDs selecionados como lista.
 
-Se o autor ou assunto de ID 1 não existir, também haverá mensagens de vínculo inválido. Para observar apenas a mensagem de lista, consulte os GETs de autores e assuntos e substitua os IDs pelos existentes. Mantenha `autores` como objeto durante a reprodução: o payload inválido deve ser recusado antes da persistência e nenhum livro deve ser criado. Não é necessário criar registros só para provocar o erro, nem remover a tradução para conferir a correção.
+Use IDs existentes de autores e assuntos para verificar apenas a validação de lista. IDs inexistentes também geram mensagens de vínculo inválido. No exemplo, mantenha `autores` como objeto para receber o erro da regra `list`.

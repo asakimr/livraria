@@ -70,13 +70,13 @@ O controller consulta a view, aplica filtros e agrupa por CodAu. Assim, autores 
 
 No MySQL, listas muito extensas podem atingir `group_concat_max_len`; esse parâmetro deve ser avaliado se o volume de assuntos crescer. Não foi feita uma otimização baseada em benchmark.
 
-O rollback dessa migration executa `DROP VIEW IF EXISTS`, não DROP TABLE. Nenhuma procedure ou trigger é utilizada: migrations, FKs, FormRequests e Services concentram as responsabilidades necessárias. Não foram criados objetos apenas para preencher a documentação.
+O rollback dessa migration executa `DROP VIEW IF EXISTS`, não DROP TABLE. Nenhuma procedure ou trigger é utilizada: migrations, FKs, FormRequests e Services concentram as responsabilidades necessárias.
 
 ## AnoPublicacao inteiro
 
-O diagrama prevê VARCHAR(4), com exceção para ajustes de performance. Foi mantida a decisão do autor de usar INT: quatro bytes no MySQL, comparados com quatro dígitos ASCII mais um byte de comprimento no VARCHAR(4), desconsiderando o restante da linha. Isso representa uma redução modesta de armazenamento; não demonstra redução no tempo de consulta sem medição.
+O diagrama prevê VARCHAR(4), com exceção para ajustes de performance. `AnoPublicacao` utiliza `INT`: quatro bytes no MySQL, comparados com quatro dígitos ASCII mais um byte de comprimento no VARCHAR(4), desconsiderando o restante da linha. Isso representa uma redução modesta de armazenamento; não demonstra redução no tempo de consulta sem medição.
 
-O tipo permite operações numéricas sem conversão. Comparativos futuros são uma possibilidade, não uma funcionalidade implementada. SMALLINT economizaria mais, mas não foi adotado para evitar uma mudança adicional à escolha existente.
+O tipo permite operações numéricas sem conversão, embora comparações por ano não sejam utilizadas nas consultas atuais.
 
 ## Tabelas de infraestrutura preexistentes
 
