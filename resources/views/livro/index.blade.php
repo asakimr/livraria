@@ -113,6 +113,7 @@
                             <option value="{{ $autor->CodAu }}">{{ $autor->Nome }}</option>
                         @endforeach
                     </select>
+                    <div id="AutoresErro" class="invalid-feedback" role="alert">Selecione pelo menos um autor da lista. Digitar na busca não seleciona um item.</div>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -122,6 +123,7 @@
                             <option value="{{ $assunto->codAs }}">{{ $assunto->Descricao }}</option>
                         @endforeach
                     </select>
+                    <div id="AssuntosErro" class="invalid-feedback" role="alert">Selecione pelo menos um assunto da lista. Digitar na busca não seleciona um item.</div>
                 </div>
             </div>
 
@@ -184,6 +186,7 @@
                             <option value="{{ $autor->CodAu }}">{{ $autor->Nome }}</option>
                         @endforeach
                     </select>
+                    <div id="editAutoresErro" class="invalid-feedback" role="alert">Selecione pelo menos um autor da lista. Digitar na busca não seleciona um item.</div>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -193,6 +196,7 @@
                             <option value="{{ $assunto->codAs }}">{{ $assunto->Descricao }}</option>
                         @endforeach
                     </select>
+                    <div id="editAssuntosErro" class="invalid-feedback" role="alert">Selecione pelo menos um assunto da lista. Digitar na busca não seleciona um item.</div>
                 </div>
             </div>
 
@@ -242,6 +246,31 @@
                         threshold: 0.1,
                         distance: 1000
                     }
+                });
+
+                const choices = select.closest('.choices');
+                const busca = choices.querySelector('input');
+                const feedback = document.getElementById(select.id + 'Erro');
+                busca.setAttribute('aria-describedby', feedback.id);
+                busca.setAttribute('aria-label', select.labels[0].textContent.trim());
+
+                function atualizarFeedback(invalido) {
+                    feedback.classList.toggle('d-block', invalido);
+                    choices.classList.toggle('is-invalid', invalido);
+                    busca.setAttribute('aria-invalid', String(invalido));
+                }
+
+                // O select contém os IDs escolhidos; o texto da busca não é uma seleção.
+                select.addEventListener('invalid', function (event) {
+                    event.preventDefault();
+                    atualizarFeedback(true);
+                    if (select.form.querySelector(':invalid') === select) busca.focus();
+                });
+                select.addEventListener('change', function () {
+                    atualizarFeedback(select.selectedOptions.length === 0);
+                });
+                select.closest('.modal').addEventListener('hidden.bs.modal', function () {
+                    atualizarFeedback(false);
                 });
             });
 
